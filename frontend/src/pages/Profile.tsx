@@ -13,11 +13,12 @@ interface User {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/user/profile", {
+      const res = await axios.get(`${API_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);

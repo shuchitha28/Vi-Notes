@@ -32,7 +32,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
           return;
         }
 
-        const res = await axios.post("http://localhost:5000/api/auth/login", {
+        const res = await axios.post("https://vi-notes-sooty.vercel.app/api/auth/login", {
           email: loginEmail,
           password: loginPassword,
         });
@@ -51,7 +51,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
           return;
         }
 
-        await axios.post("http://localhost:5000/api/auth/register", {
+        await axios.post("https://vi-notes-sooty.vercel.app/api/auth/register", {
           username: registerUsername,
           email: registerEmail,
           password: registerPassword,

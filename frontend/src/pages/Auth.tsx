@@ -20,7 +20,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false);
 
-  const API_URL = process.env.REACT_APP_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {

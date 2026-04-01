@@ -31,11 +31,13 @@ export default function History() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchSessions = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/session", {
+      const res = await axios.get(`${API_URL}/api/session`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSessions(res.data);
@@ -64,7 +66,7 @@ export default function History() {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `http://localhost:5000/api/session/${confirmDeleteId}`,
+        `${API_URL}/api/session/${confirmDeleteId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

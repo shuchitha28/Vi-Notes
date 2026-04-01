@@ -7,6 +7,7 @@ export default function Editor() {
   const location = useLocation();
   const navigate = useNavigate();
   const editingSession = location.state?.editingSession;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [title, setTitle] = useState(editingSession?.title || "");
   const [text, setText] = useState(editingSession?.content || "");
@@ -68,7 +69,7 @@ export default function Editor() {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:5000/api/session",
+        `${API_URL}/api/session`,
         {
           sessionId: currentSessionId,
           title,
@@ -107,7 +108,7 @@ export default function Editor() {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        "http://localhost:5000/api/session/submit",
+        `${API_URL}/api/session/submit`,
         {
           sessionId: currentSessionId,
           title,

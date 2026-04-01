@@ -13,13 +13,14 @@ import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/user/dashboard",
+          `${API_URL}/api/user/dashboard`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

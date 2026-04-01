@@ -21,49 +21,52 @@ export default function Contact() {
 
   return (
     <motion.div
-      className="relative flex flex-col items-center justify-center flex-grow w-full px-6 py-12 font-sans text-white"
+      className="relative flex flex-col items-center justify-center flex-grow w-full px-6 py-12 font-sans text-white dark:text-white bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:from-indigo-900 dark:via-black dark:to-slate-900 "
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-        {/* Overlay with Glow */}
-        <AnimatePresence>
+
+      {/* Glow Layer */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(129,140,248,0.25),transparent_60%)] dark:bg-[radial-gradient(circle_at_top,rgba(99,102,241,0.2),transparent_60%)] "></div>
+
+      {/* Overlay */}
+      <AnimatePresence>
         {status && (
-            <motion.div
+          <motion.div
             key="overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 flex items-center justify-center bg-black/60"
-            >
+            className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/60"
+          >
             <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                exit={{ scale: 0.8 }}
-                className={`relative p-8 rounded-2xl text-center max-w-sm text-white shadow-lg transition-all duration-300 ${
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+              className={`relative p-8 rounded-2xl text-center max-w-sm text-white shadow-lg transition-all duration-300 ${
                 status.type === "success"
-                    ? "bg-green-500/90 shadow-[0_0_25px_rgba(72,255,175,0.8),0_0_50px_rgba(72,255,175,0.5)]"
-                    : "bg-red-500/90 shadow-[0_0_25px_rgba(255,72,72,0.8),0_0_50px_rgba(255,72,72,0.5)]"
-                }`}
+                  ? "bg-green-500/90 shadow-[0_0_25px_rgba(72,255,175,0.8),0_0_50px_rgba(72,255,175,0.5)]"
+                  : "bg-red-500/90 shadow-[0_0_25px_rgba(255,72,72,0.8),0_0_50px_rgba(255,72,72,0.5)]"
+              }`}
             >
-                {/* Close Button */}
-                <button
+              <button
                 onClick={() => setStatus(null)}
                 className="absolute text-xl font-bold text-white top-3 right-3 hover:text-gray-200"
-                >
+              >
                 &times;
-                </button>
+              </button>
 
-                <p className="text-lg font-semibold">{status.message}</p>
+              <p className="text-lg font-semibold">{status.message}</p>
             </motion.div>
-            </motion.div>
+          </motion.div>
         )}
-        </AnimatePresence>
+      </AnimatePresence>
 
       {/* Main Card */}
       <motion.div
         whileHover={{ scale: 1.02, boxShadow: "0 0 30px rgba(129, 140, 248, 0.7)" }}
-        className="w-full max-w-3xl p-10 space-y-6 transition-all duration-300 border shadow-lg bg-black/20 border-white/10 rounded-2xl backdrop-blur-xl"
+        className="w-full max-w-3xl p-10 space-y-6 transition-all duration-300 border shadow-lg bg-white/60 border-white/40 dark:bg-black/20 dark:border-white/10 rounded-2xl backdrop-blur-xl dark:hover:border-blue-500 hover:border-blue-500"
       >
         <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400">
           Contact Us
@@ -75,24 +78,27 @@ export default function Contact() {
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg bg-black/30 border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full px-4 py-3 text-gray-900 border rounded-lg bg-white/70 border-white/40 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-black/30 dark:border-white/20 dark:text-white"
           />
+
           <input
             type="email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 border rounded-lg bg-black/30 border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full px-4 py-3 text-gray-900 border rounded-lg bg-white/70 border-white/40 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-black/30 dark:border-white/20 dark:text-white"
           />
+
           <textarea
             placeholder="Message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full h-48 px-4 py-3 border rounded-lg resize-none bg-black/30 border-white/20 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="w-full h-48 px-4 py-3 text-gray-900 border rounded-lg resize-none bg-white/70 border-white/40 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-black/30 dark:border-white/20 dark:text-white"
           />
+
           <button
             type="submit"
-                              className="w-full py-3 mt-6 font-semibold transition-all duration-300 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.8)] hover:brightness-110"
+            className="w-full py-3 mt-6 font-semibold transition-all duration-300 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(99,102,241,0.8)] hover:brightness-110"
           >
             Send Message
           </button>

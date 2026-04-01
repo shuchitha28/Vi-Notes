@@ -13,33 +13,32 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
-    // 🔥 Get all submitted sessions
+   
     const sessions = await Session.find({
       userId: req.userId,
       submitted: true,
     });
 
-    // ✅ Completed Sessions
     const completedSessions = sessions.length;
 
-    // ✅ Avg Typing Speed
     const avgTypingSpeed =
       sessions.length > 0
         ? sessions.reduce((sum, s) => sum + (s.analysis?.avgSpeed || 0), 0) /
           sessions.length
         : 0;
 
-    // ✅ Score (based on suspicionScore)
-    const score =
-      sessions.length > 0
-        ? sessions.reduce((sum, s) => sum + (1 - (s.analysis?.suspicionScore || 0)), 0)
-        : 0;
+    const score = sessions.length > 0
+      ? sessions.reduce((sum, s) => {
+          const sScore = 1 - (s.analysis?.suspicionScore || 0);
+          return sum + Math.min(Math.max(sScore, 0), 1);
+        }, 0)
+      : 0;
 
     res.json({
       ...user.toObject(),
       completedSessions,
       avgTypingSpeed: Math.round(avgTypingSpeed),
-      score: Math.round(score * 100), // scale score
+      score: Math.round(score * 100), 
     });
 
   } catch (err) {
@@ -48,7 +47,6 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
   }
 };
 
-// Update user profile
 export const updateProfile = async (req: any, res: Response) => {
   try {
     const userId = req.userId;
@@ -69,7 +67,6 @@ export const updateProfile = async (req: any, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Update fields
     user.username = username || user.username;
     user.email = email || user.email;
     user.bio = bio || user.bio;
@@ -77,7 +74,6 @@ export const updateProfile = async (req: any, res: Response) => {
     user.avgTypingSpeed = avgTypingSpeed ?? user.avgTypingSpeed;
     user.score = score ?? user.score;
 
-    // 🔥 VERY IMPORTANT (you are missing this)
     if (profilePic) {
       user.profilePic = profilePic;
     }
@@ -86,19 +82,18 @@ export const updateProfile = async (req: any, res: Response) => {
 
     res.json(user);
   } catch (err) {
-    console.error(err); // 👈 ADD THIS
+    console.error(err); 
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// Reset password
 export const resetPassword = async (req: AuthRequest, res: Response) => {
   try {
     const { currentPassword, newPassword } = req.body;
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    const valid = await bcrypt.compare(currentPassword, user.password);
+    const valid = await bcrypt.compare(currentPassword, user.password || "");
     if (!valid) return res.status(400).json({ message: "Current password is incorrect" });
 
     user.password = await bcrypt.hash(newPassword, 10);

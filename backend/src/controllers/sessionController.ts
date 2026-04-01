@@ -1,8 +1,6 @@
 import { Response } from "express";
 import Session from "../models/Session";
-import User from "../models/User";
 import { AuthRequest } from "../middleware/authMiddleware";
-import { Types, Collection, Connection, Error, Schema } from "mongoose";
 
 // GET all sessions
 export const getSessions = async (req: AuthRequest, res: Response) => {
@@ -24,23 +22,22 @@ export const saveSession = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.userId) return res.status(401).json({ message: "Unauthorized" });
 
-    const { sessionId, content = "", keystrokes = [], pasteEvents = [] } = req.body;
-
-    const totalChars = content.length;
+    const { sessionId, title = "Untitled Session", content = "", keystrokes = [], pasteEvents = [] } = req.body;
 
     const totalTimeMinutes =
       keystrokes.reduce((sum: number, k: { keyInterval: number }) => sum + k.keyInterval, 0) /
       1000 /
       60;
 
-    const avgSpeed = totalTimeMinutes > 0 ? totalChars / 5 / totalTimeMinutes : 0;
+    const wordsArray = content.trim().split(/\s+/);
+    const totalWords = wordsArray.filter((w: string | any[]) => w.length > 0).length;
 
+    const avgSpeed = totalTimeMinutes > 0 ? totalWords / totalTimeMinutes : 0;
     const pasteRatio = pasteEvents.length;
     const wasPasted = pasteEvents.length > 0;
 
-    let suspicionScore = 0;
-    if (avgSpeed < 20) suspicionScore += 1; // very slow
-    if (pasteRatio > 0) suspicionScore += 2; // pasted
+    let suspicionScore = pasteRatio * 0.7 + (avgSpeed < 30 ? 0.3 : 0);
+    suspicionScore = Math.min(Math.max(suspicionScore, 0), 1);
 
     const analysis = { avgSpeed, pasteRatio, suspicionScore, wasPasted };
 
@@ -49,12 +46,13 @@ export const saveSession = async (req: AuthRequest, res: Response) => {
     if (sessionId) {
       session = await Session.findOneAndUpdate(
         { _id: sessionId, userId: req.userId },
-        { content, keystrokes, pasteEvents, analysis, submitted: false },
+        { title, content, keystrokes, pasteEvents, analysis, submitted: false },
         { returnDocument: "after" }
       );
     } else {
       session = await Session.create({
         userId: req.userId,
+        title,
         content,
         keystrokes,
         pasteEvents,
@@ -75,19 +73,22 @@ export const submitSession = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.userId) return res.status(401).json({ message: "Unauthorized" });
 
-    const { sessionId, content = "", keystrokes = [], pasteEvents = [] } = req.body;
+    const { sessionId, title = "Untitled Session", content = "", keystrokes = [], pasteEvents = [] } = req.body;
 
-    const totalChars = content.length;
     const totalTimeMinutes =
       keystrokes.reduce((sum: number, k: { keyInterval: number }) => sum + k.keyInterval, 0) /
       1000 /
       60;
 
-    const avgSpeed = totalTimeMinutes > 0 ? totalChars / 5 / totalTimeMinutes : 0;
+    const wordsArray = content.trim().split(/\s+/);
+    const totalWords = wordsArray.filter((w: string | any[]) => w.length > 0).length;
+
+    const avgSpeed = totalTimeMinutes > 0 ? totalWords / totalTimeMinutes : 0;
     const pasteRatio = pasteEvents.length;
     const wasPasted = pasteEvents.length > 0;
 
-    const suspicionScore = pasteRatio * 0.7 + (avgSpeed < 30 ? 0.3 : 0);
+    let suspicionScore = pasteRatio * 0.7 + (avgSpeed < 30 ? 0.3 : 0);
+    suspicionScore = Math.min(Math.max(suspicionScore, 0), 1);
 
     const analysis = { avgSpeed, pasteRatio, suspicionScore, wasPasted };
 
@@ -96,12 +97,13 @@ export const submitSession = async (req: AuthRequest, res: Response) => {
     if (sessionId) {
       session = await Session.findOneAndUpdate(
         { _id: sessionId, userId: req.userId },
-        { content, keystrokes, pasteEvents, analysis, submitted: true },
+        { title, content, keystrokes, pasteEvents, analysis, submitted: true },
         { returnDocument: "after" }
       );
     } else {
       session = await Session.create({
         userId: req.userId,
+        title,
         content,
         keystrokes,
         pasteEvents,

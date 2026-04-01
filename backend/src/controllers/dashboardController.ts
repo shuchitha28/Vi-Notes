@@ -12,7 +12,7 @@ export const getDashboard = async (req: AuthRequest, res: Response) => {
       submitted: true,
     }).sort({ createdAt: 1 });
 
-    // Only include genuine typing sessions (no pasting)
+    // Only include genuine typing sessions 
     const genuineSessions = sessions.filter(s => !s.analysis?.wasPasted);
 
     const totalSessions = genuineSessions.length;
@@ -21,7 +21,7 @@ export const getDashboard = async (req: AuthRequest, res: Response) => {
     const speeds = genuineSessions.map(s => s.analysis?.avgSpeed || 0);
     const scores = genuineSessions.map(s => {
       const suspicion = s.analysis?.suspicionScore || 0;
-      return (1 - suspicion) * 100;
+      return Math.min(Math.max((1 - suspicion) * 100, 0), 100);
     });
 
     const avgSpeed =
@@ -37,10 +37,10 @@ export const getDashboard = async (req: AuthRequest, res: Response) => {
     // Build trend data: mark pasted sessions but include all for visualization
     const sessionTrends = sessions.map(s => ({
       date: new Date(s.createdAt).toLocaleDateString(),
-      speed: s.analysis?.avgSpeed || 0,
+      speed: s.analysis?.avgSpeed ?? 0,
       score: (1 - (s.analysis?.suspicionScore || 0)) * 100,
       pasted: s.analysis?.wasPasted || false,
-    }));
+    })); 
 
     res.json({
       totalSessions,

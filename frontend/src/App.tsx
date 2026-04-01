@@ -21,7 +21,9 @@ import LandingPage from "./pages/LandingPage";
 
 function App() {
   const [isAuth, setIsAuth] = useState<boolean>(false);
-  const [username, setUsername] = useState(localStorage.getItem("username") || "");
+  const [username, setUsername] = useState(
+    localStorage.getItem("username") || ""
+  );
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,10 +32,10 @@ function App() {
 
   const handleLogin = (usernameFromServer: string) => {
     setIsAuth(true);
-    setUsername(usernameFromServer); // Directly set the username
-    localStorage.setItem("username", usernameFromServer); // Optional: keep it in localStorage for refresh
+    setUsername(usernameFromServer);
+    localStorage.setItem("username", usernameFromServer);
   };
-  
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -41,10 +43,30 @@ function App() {
     setUsername("");
   };
 
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "dark"
+  );
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   return (
     <Router>
-      <div className="flex flex-col min-h-screen text-white bg-gradient-to-br from-indigo-900 via-black to-slate-900">
-        <Header isAuth={isAuth} onLogout={handleLogout} />
+      <div
+        className="flex flex-col min-h-screen text-gray-800 transition-colors duration-300 bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 dark:text-white dark:bg-gradient-to-br dark:from-indigo-900 dark:via-black dark:to-slate-900"
+      >
+        <Header
+          isAuth={isAuth}
+          onLogout={handleLogout}
+          theme={theme}
+          setTheme={setTheme}
+        />
 
         <div className="flex flex-col flex-grow">
           <Routes>
@@ -56,8 +78,18 @@ function App() {
             {/* Auth routes */}
             <Route
               path="/"
-              element={isAuth ? <LandingPage username={username} onLogout={handleLogout} /> : <Login onLogin={handleLogin} />}
+              element={
+                isAuth ? (
+                  <LandingPage
+                    username={username}
+                    onLogout={handleLogout}
+                  />
+                ) : (
+                  <Login onLogin={handleLogin} />
+                )
+              }
             />
+
             <Route
               path="/editor"
               element={isAuth ? <Editor /> : <Navigate to="/" />}

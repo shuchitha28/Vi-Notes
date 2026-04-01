@@ -2,6 +2,7 @@ import mongoose, { Document } from "mongoose";
 
 interface ISession extends Document {
   userId: mongoose.Types.ObjectId;
+  title: String,
   content: string;
   keystrokes: {
     keyInterval: number;
@@ -25,6 +26,7 @@ interface ISession extends Document {
 const SessionSchema = new mongoose.Schema<ISession>(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    title: { type: String, default: "Untitled Session" },
     content: { type: String, default: "" },
 
     keystrokes: [

@@ -18,23 +18,41 @@ export default function SessionCard({
   return (
     <motion.div
       key={session._id}
-      className="flex flex-col p-4 rounded-2xl border border-white/10 bg-black/30 shadow-lg backdrop-blur-lg transition-all duration-300 hover:border-purple-500 hover:shadow-[0_0_25px_rgba(128,0,255,0.6)]"
+      className="flex flex-col p-4 rounded-2xl border 
+      bg-white/70 dark:bg-black/30 
+      border-gray-200 dark:border-white/10 
+      text-gray-900 dark:text-white
+      shadow-lg backdrop-blur-lg transition-all duration-300 
+      hover:border-purple-500 hover:shadow-[0_0_25px_rgba(128,0,255,0.6)]"
       style={{ width: "100%", height: "200px" }}
       whileHover={{ scale: 1.03 }}
     >
-      <p className="mb-2 font-medium text-white truncate">{session.content}</p>
-
+      <p className="mb-2 font-medium">
+        {session.title}
+      </p>
+      {!session.submitted && (
+        <div className="mb-2 text-sm text-gray-500 dark:text-gray-300">
+          <p className="font-semibold line-clamp-4"> {session.content}</p>
+        </div>
+      )}
+  
       {session.submitted && (
-        <p className="mb-2 text-sm text-gray-400 truncate">
+        <p className="mb-2 text-sm font-semibold text-gray-600 truncate dark:text-gray-400">
           Submitted: {new Date(session.updatedAt).toLocaleString()}
         </p>
       )}
 
       {session.submitted && (
-        <div className="mb-2 overflow-hidden text-sm text-gray-300">
-          <p className="truncate">Avg Speed: {session.analysis.avgSpeed.toFixed(2)} ms/keystroke</p>
-          <p className="truncate">Paste Ratio: {session.analysis.pasteRatio.toFixed(2)}</p>
-          <p className="truncate">Suspicion Score: {session.analysis.suspicionScore.toFixed(2)}</p>
+        <div className="mb-2 overflow-hidden text-sm text-gray-700 dark:text-gray-300">
+          <p className="truncate">
+            Avg Speed: {session.analysis.avgSpeed.toFixed(2)} ms/keystroke
+          </p>
+          <p className="truncate">
+            Paste Ratio: {session.analysis.pasteRatio.toFixed(2)}
+          </p>
+          <p className="truncate">
+            Suspicion Score: {session.analysis.suspicionScore.toFixed(2)}
+          </p>
         </div>
       )}
 
@@ -49,6 +67,7 @@ export default function SessionCard({
             Edit
           </motion.button>
         )}
+
         {onView && (
           <motion.button
             onClick={() => onView(session)}
@@ -59,6 +78,7 @@ export default function SessionCard({
             View
           </motion.button>
         )}
+
         {onDelete && (
           <motion.button
             onClick={() => onDelete(session._id)}

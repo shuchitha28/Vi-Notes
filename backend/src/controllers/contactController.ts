@@ -9,7 +9,6 @@ export const sendContactMessage = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Save message to MongoDB
     const newMessage = new ContactMessage({ name, email, message });
     await newMessage.save();
 

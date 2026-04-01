@@ -1,12 +1,15 @@
 import { motion } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiSun, FiMoon } from "react-icons/fi";
 
 type Props = {
   isAuth: boolean;
   onLogout: () => void;
+  theme: string;
+  setTheme: (theme: string) => void;
 };
 
-export default function Header({ isAuth, onLogout }: Props) {
+export default function Header({ isAuth, onLogout, theme, setTheme }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -14,19 +17,25 @@ export default function Header({ isAuth, onLogout }: Props) {
     const isActive = location.pathname === to;
 
     return (
-      <button
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => navigate(to)}
-        className={`px-3 py-1 transition-colors duration-300 rounded-lg text-white/70 hover:text-pink-400 ${
-          isActive ? "text-pink-400" : ""
-        }`}
+        className={
+          isActive
+            ? "px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-pink-500 to-purple-500 text-white shadow-md"
+            : "px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-white/10 dark:text-white/80 dark:hover:bg-white/20"
+        }
       >
         {label}
-      </button>
+      </motion.button>
     );
   };
 
   return (
-    <header className="flex items-center justify-between w-full px-10 py-6 shadow-lg bg-black/40 backdrop-blur-xl">
+    <header className="flex items-center justify-between w-full px-10 py-6 bg-white border-b border-gray-200 shadow-lg backdrop-blur-xl dark:bg-black/40 dark:border-white/10">
+      
+      {/* Logo */}
       <motion.h1
         onClick={() => navigate("/")}
         animate={{ y: [0, -5, 0] }}
@@ -36,22 +45,41 @@ export default function Header({ isAuth, onLogout }: Props) {
         Vi-Notes
       </motion.h1>
 
-      {isAuth && (
-        <nav className="flex items-center gap-4">
-          <NavLink to="/dashboard" label="Dashboard" />
-          <NavLink to="/editor" label="Editor" />
-          <NavLink to="/history" label="History" />
-          <NavLink to="/profile" label="Profile" />
-          <NavLink to="/settings" label="Settings" />
+      <div className="flex items-center gap-4">
+        
+        {/* Theme Toggle */}
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="p-2 transition-all bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20"
+        >
+          {theme === "dark" ? (
+            <FiSun className="text-yellow-400" size={20} />
+          ) : (
+            <FiMoon className="text-black dark:text-white" size={20} />
+          )}
+        </motion.button>
 
-          <button
-            onClick={onLogout}
-            className="px-4 py-2 text-white transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-purple-500 to-indigo-500 hover:scale-105 hover:brightness-110 hover:shadow-[0_0_15px_rgba(128,0,255,0.7)]"
-          >
-            Logout
-          </button>
-        </nav>
-      )}
+        {/* Nav */}
+        {isAuth && (
+          <nav className="flex items-center gap-4">
+            <NavLink to="/dashboard" label="Dashboard" />
+            <NavLink to="/editor" label="Editor" />
+            <NavLink to="/history" label="History" />
+            <NavLink to="/profile" label="Profile" />
+            <NavLink to="/settings" label="Settings" />
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onLogout}
+              className="px-4 py-2 text-white transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-purple-500 to-indigo-500 hover:brightness-110"
+            >
+              Logout
+            </motion.button>
+          </nav>
+        )}
+      </div>
     </header>
   );
 }

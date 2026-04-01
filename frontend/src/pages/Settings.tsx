@@ -28,6 +28,8 @@ export default function SettingsPage() {
   const [showOverlay, setShowOverlay] = useState(false);
   const [status, setStatus] = useState<"success" | "error" | "loading">("loading");
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const generateAvatars = (style: string, count: number) => {
     return Array.from(
       { length: count },
@@ -44,7 +46,7 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/user/profile", {
+      const res = await axios.get(`${API_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUser(res.data);
@@ -58,7 +60,7 @@ export default function SettingsPage() {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        "http://localhost:5000/api/user/profile",
+        `${API_URL}/api/user/profile`,
         { ...user, profilePic: selectedAvatar },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +82,7 @@ export default function SettingsPage() {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        "http://localhost:5000/api/user/reset-password",
+        `${API_URL}/api/user/reset-password`,
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

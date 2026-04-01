@@ -8,10 +8,12 @@ export default function Contact() {
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/contact", { name, email, message });
+      await axios.post(`${API_URL}/api/contact`, { name, email, message });
       setStatus({ type: "success", message: "Message sent! We'll get back to you shortly." });
       setName(""); setEmail(""); setMessage("");
     } catch {

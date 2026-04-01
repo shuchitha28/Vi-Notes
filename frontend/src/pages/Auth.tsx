@@ -20,6 +20,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false);
 
+  const API_URL = process.env.REACT_APP_API_URL;
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
@@ -32,7 +33,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
           return;
         }
 
-        const res = await axios.post("https://vi-notes-sooty.vercel.app/api/auth/login", {
+        const res = await axios.post(`${API_URL}/api/auth/login`, {
           email: loginEmail,
           password: loginPassword,
         });
@@ -51,7 +52,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
           return;
         }
 
-        await axios.post("https://vi-notes-sooty.vercel.app/api/auth/register", {
+        await axios.post(`${API_URL}/api/auth/register`, {
           username: registerUsername,
           email: registerEmail,
           password: registerPassword,
@@ -207,7 +208,7 @@ export default function Auth({ onLogin }: { onLogin: (username: string) => void 
                     onSuccess={async (credentialResponse) => {
                       try {
                         const res = await axios.post(
-                          "http://localhost:5000/api/auth/google",
+                          `${API_URL}/api/auth/google`,
                           {
                             token: credentialResponse.credential,
                           }

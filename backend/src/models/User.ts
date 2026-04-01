@@ -1,6 +1,18 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
-const UserSchema = new mongoose.Schema(
+export interface IUser extends Document {
+  username: string;
+  email: string;
+  password?: string;
+  authProvider: "local" | "google";
+  googleId?: string;
+  bio?: string;
+  completedSessions?: number;
+  avgTypingSpeed?: number;
+  score?: number;
+  profilePic?: string;
+}
+const UserSchema = new mongoose.Schema<IUser>(
   {
     username: { 
       type: String, 
@@ -19,7 +31,7 @@ const UserSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: function () {
+      required: function (this: IUser) { // <-- tell TS the type of `this`
         return this.authProvider === "local";
       },
     },
@@ -53,4 +65,5 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model<IUser>("User", UserSchema);
+export default User;

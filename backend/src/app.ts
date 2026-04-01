@@ -7,7 +7,9 @@ import contactRoutes from "./routes/contact.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "https://vi-notes-sooty.vercel.app"
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);

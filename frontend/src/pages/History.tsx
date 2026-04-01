@@ -200,7 +200,8 @@ export default function History() {
     });
 
     const safeUsername = (session.userId?.username || "user").replace(/\s+/g, "_");
-    doc.save(`session_${safeUsername}.pdf`);
+    const safeTitle = (session.title || "untitled").replace(/[<>:"/\\|?*]+/g, "").replace(/\s+/g, "_");
+    doc.save(`${safeTitle}_${safeUsername}.pdf`);
   };
 
   if (loading) {
